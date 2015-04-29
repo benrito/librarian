@@ -8,6 +8,7 @@ This software is free software licensed under the terms of GPLv3. See COPYING
 file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
+import logging
 import urlparse
 import functools
 
@@ -41,6 +42,9 @@ def get_content_url(root_url, domain):
 
 def content_resolver_plugin(root_url, ap_client_ip_range):
     ip_range = netutils.IPv4Range(*ap_client_ip_range)
+    log_base = '[CONTENT RESOLVER] '
+    pre_resolve = log_base + 'CLIENT: {0} REQUESTED DOMAIN: {1} PATH: {2}'
+    post_resolve = log_base + 'REDIRECT TO: {0}'
 
     def decorator(callback):
         @functools.wraps(callback)
@@ -48,8 +52,12 @@ def content_resolver_plugin(root_url, ap_client_ip_range):
             target_host = netutils.get_target_host()
             is_regular_access = target_host in root_url
             if not is_regular_access and request.remote_addr in ip_range:
+                logging.info(pre_resolve.format(request.remote_addr,
+                                                target_host,
+                                                request.fullpath))
                 # a content domain was entered(most likely), try to load it
                 content_url = get_content_url(root_url, target_host)
+                logging.info(post_resolve.format(content_url))
                 return redirect(content_url)
             return callback(*args, **kwargs)
         return wrapper
