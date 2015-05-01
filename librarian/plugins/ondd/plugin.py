@@ -267,6 +267,6 @@ class Dashboard(DashboardPlugin):
     def get_context(self):
         return dict(status=ipc.get_status(),
                     vals=request.app.setup.get('ondd', {}),
-                    files=get_file_list(),
+                    files=[],
                     errors={},
                     **CONST)
