@@ -23,6 +23,10 @@ PREFIX = '/apps'
 
 @view('app_list')
 def show_apps():
+    print('PRE', request.fullpath)
+    import time
+    time.sleep(10)
+    print('POST', request.fullpath)
     appdir = request.app.config['content.appdir']
     apps_found = []
     if os.path.exists(appdir):
