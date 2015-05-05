@@ -27,6 +27,7 @@ class Dashboard(DashboardPlugin):
     name = 'netinterfaces'
 
     def get_context(self):
+        raise Exception('testing')
         all_interfaces = get_network_interfaces()
         physicals = dict((i.mac_address, i)
                          for i in all_interfaces if i.is_physical)
